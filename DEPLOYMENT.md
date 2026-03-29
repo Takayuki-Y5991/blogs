@@ -1,22 +1,24 @@
 # デプロイガイド / Deployment Guide
 
-このブログは静的サイトとして生成され、GitHub Pages にデプロイされます。
+このブログは静的サイトとして生成され、Netlify にデプロイされます。
 
-This blog is generated as a static site and deployed to GitHub Pages.
+This blog is generated as a static site and deployed to Netlify.
 
-## GitHub Pages へのデプロイ / Deploy to GitHub Pages
+## Netlify へのデプロイ / Deploy to Netlify
 
-### 前提条件 / Prerequisites
+### Git 連携（推奨）
 
-1. GitHub リポジトリの Settings > Pages で以下を設定:
-   - Source: GitHub Actions
-   - Branch: main
+1. https://app.netlify.com で GitHub リポジトリを接続
+2. ビルド設定は `netlify.toml` に記載済み
+3. `main` ブランチへの push で自動デプロイされます
 
-### デプロイ方法 / Deployment Method
+### Netlify CLI
 
-`.github/workflows/deploy.yml` が設定済みです。`main` ブランチへの push で自動デプロイされます。
-
-The `.github/workflows/deploy.yml` workflow is already configured. Pushing to the `main` branch will trigger automatic deployment.
+```bash
+npm install -g netlify-cli
+pnpm build
+netlify deploy --prod --dir=dist
+```
 
 ## ビルドコマンド / Build Commands
 
@@ -30,28 +32,6 @@ pnpm build
 # ビルド結果のプレビュー
 pnpm preview
 ```
-
-## 環境変数 / Environment Variables
-
-必要に応じて以下の環境変数を設定してください:
-
-Set the following environment variables as needed:
-
-- `SITE_URL`: サイトの URL（デフォルト: https://konkon.dev）
-- `SITE_URL`: Site URL (default: https://konkon.dev)
-
-## SEO 設定 / SEO Configuration
-
-全ページに以下の SEO メタタグが自動設定されます:
-
-All pages automatically include the following SEO meta tags:
-
-- Title tag
-- Meta description
-- Canonical URL
-- Hreflang tags (ja, en, x-default)
-- Open Graph Protocol (OGP) tags
-- Twitter Card tags
 
 ## 技術スタック / Tech Stack
 
