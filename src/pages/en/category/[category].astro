@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { filterPostsByLang, useTranslations } from '../../../i18n/utils';
+
+export const getStaticPaths = (async () => {
+  const allPosts = await getCollection('blog');
+  const enPosts = filterPostsByLang(allPosts, 'en');
+  
+  // 全カテゴリを取得
+  const categories = ['htb', 'lang', 'misc', 'daily-alpacahack'] as const;
+  
+  return categories.map(category => ({
+    params: { category },
+    props: { 
+      posts: enPosts.filter(post => post.data.category === category)
+        .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { category } = Astro.params;
+const { posts } = Astro.props;
+const lang = 'en';
+const t = useTranslations(lang);
+
+// カテゴリの翻訳キーを取得
+const categoryKey = `category.${category}`;
+const categoryLabel = t(categoryKey);
+---
+
+<BaseLayout
+  title={`${categoryLabel} - konkon.dev`}
+  description={`Posts in ${categoryLabel} category`}
+  lang={lang}
+>
+  <h1>{categoryLabel}</h1>
+  <div class="post-list">
+    {posts.map((post) => (
+      <PostCard post={post} lang={lang} />
+    ))}
+  </div>
+  {posts.length === 0 && (
+    <p class="no-posts">No posts in this category.</p>
+  )}
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-lg);
+  }
+
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .no-posts {
+    color: var(--color-text-muted);
+    text-align: center;
+    padding: var(--space-xl);
+  }
+</style>

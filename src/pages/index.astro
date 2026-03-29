@@ -1,0 +1,168 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import SearchBar from '../components/SearchBar.astro';
+import { filterPostsByLang, useTranslations } from '../i18n/utils';
+
+const lang = 'ja';
+const t = useTranslations(lang);
+
+const allPosts = await getCollection('blog');
+const posts = filterPostsByLang(allPosts, lang);
+const sortedPosts = posts.sort((a, b) => 
+  b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const totalPosts = sortedPosts.length;
+const categories = [...new Set(sortedPosts.map(p => p.data.category))];
+const allTags = [...new Set(sortedPosts.flatMap(p => p.data.tags))];
+---
+
+<BaseLayout
+  title="konkon.dev - Tech Blog"
+  description="HackTheBox writeups and programming language exploration"
+  lang={lang}
+>
+  <div class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>{t('post.latestPosts')}</h1>
+      <p class="hero-subtitle">コーヒーを片手に、技術の世界を探索しましょう</p>
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-value">{totalPosts}</span>
+          <span class="stat-label">記事</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value">{categories.length}</span>
+          <span class="stat-label">カテゴリ</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value">{allTags.length}</span>
+          <span class="stat-label">タグ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <SearchBar lang={lang} />
+  
+  <div class="post-grid">
+    {sortedPosts.map((post) => (
+      <PostCard post={post} lang={lang} />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    position: relative;
+    margin: calc(-1 * var(--space-lg)) calc(-1 * var(--space-md)) var(--space-lg);
+    padding: var(--space-xl) var(--space-md);
+    background-image: url('/images/cafe-hero.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow: hidden;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      margin: calc(-1 * var(--space-xl)) calc(-1 * var(--space-lg)) var(--space-lg);
+      padding: var(--space-xl) var(--space-lg);
+      min-height: 280px;
+    }
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(44, 36, 32, 0.85) 0%,
+      rgba(44, 36, 32, 0.7) 50%,
+      rgba(139, 111, 71, 0.75) 100%
+    );
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .hero h1 {
+    color: #FFFFFF;
+    margin-bottom: var(--space-sm);
+    font-family: var(--font-heading);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .hero-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    font-style: italic;
+    margin-bottom: var(--space-lg);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .stats-bar {
+    display: inline-flex;
+    gap: var(--space-lg);
+    align-items: center;
+    padding: var(--space-md) var(--space-xl);
+    background-color: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-lg);
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: #FFFFFF;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: 32px;
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    max-width: var(--content-width);
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,323 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, getPathPrefix, getSlugFromId } from '../i18n/utils';
+import { estimateReadingTime, getCategoryIcon } from '../utils/readingTime';
+import TagList from './TagList.astro';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  lang: Lang;
+}
+
+const { post, lang } = Astro.props;
+const t = useTranslations(lang);
+const prefix = getPathPrefix(lang);
+const slug = getSlugFromId(post.id);
+
+const categoryKey = `category.${post.data.category}`;
+const categoryLabel = t(categoryKey);
+
+const formattedDate = post.data.pubDate.toLocaleDateString(
+  lang === 'ja' ? 'ja-JP' : 'en-US',
+  { year: 'numeric', month: 'long', day: 'numeric' }
+);
+
+const readingTime = estimateReadingTime(post.body, lang);
+const readingTimeText = lang === 'ja' ? `${readingTime}分で読める` : `${readingTime} min read`;
+const categoryIcon = getCategoryIcon(post.data.category);
+const readMoreText = lang === 'ja' ? '続きを読む' : 'Read more';
+---
+
+<article class="post-card" data-category={post.data.category}
+  data-title={post.data.title}
+  data-description={post.data.description}
+  data-tags={post.data.tags.join(',')}>
+  <a href={`${prefix}/blog/${slug}`} class="card-link">
+    <div class="card-illustration" aria-hidden="true">
+      <div class="illustration-bg">
+        {post.data.category === 'htb' && (
+          <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+            <rect x="30" y="15" width="140" height="50" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="40" y="25" width="30" height="14" rx="2" fill="currentColor" opacity="0.15"/>
+            <rect x="40" y="46" width="80" height="2.5" rx="1.25" fill="currentColor" opacity="0.12"/>
+            <rect x="40" y="53" width="55" height="2.5" rx="1.25" fill="currentColor" opacity="0.08"/>
+            <text x="80" y="34" font-size="8" fill="currentColor" opacity="0.4" font-family="monospace">&gt;_ hack</text>
+            <circle cx="150" cy="32" r="8" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+            <path d="M147 32 L150 35 L154 29" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+          </svg>
+        )}
+        {post.data.category === 'daily-alpacahack' && (
+          <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+            <rect x="30" y="15" width="140" height="50" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="40" y="25" width="30" height="14" rx="2" fill="currentColor" opacity="0.15"/>
+            <rect x="40" y="46" width="80" height="2.5" rx="1.25" fill="currentColor" opacity="0.12"/>
+            <rect x="40" y="53" width="55" height="2.5" rx="1.25" fill="currentColor" opacity="0.08"/>
+            <text x="80" y="34" font-size="8" fill="currentColor" opacity="0.4" font-family="monospace">&gt;_ hack</text>
+            <circle cx="150" cy="32" r="8" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+            <path d="M147 32 L150 35 L154 29" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+          </svg>
+        )}
+        {post.data.category === 'lang' && (
+          <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+            <path d="M70 65 C70 65 80 20 100 20 C120 20 130 65 130 65" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+            <ellipse cx="100" cy="68" rx="35" ry="5" fill="currentColor" opacity="0.06"/>
+            <path d="M85 52 Q100 44 115 52" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25"/>
+            <path d="M82 14 Q86 6 90 14" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.2"/>
+            <path d="M96 10 Q100 2 104 10" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.18"/>
+            <path d="M110 14 Q114 6 118 14" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.15"/>
+            <text x="140" y="45" font-size="10" fill="currentColor" opacity="0.15" font-family="monospace">{`</>`}</text>
+          </svg>
+        )}
+        {post.data.category === 'misc' && (
+          <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+            <rect x="40" y="10" width="55" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+            <path d="M40 20 L95 20" stroke="currentColor" stroke-width="1" opacity="0.2"/>
+            <rect x="48" y="28" width="38" height="2.5" rx="1.25" fill="currentColor" opacity="0.1"/>
+            <rect x="48" y="36" width="30" height="2.5" rx="1.25" fill="currentColor" opacity="0.08"/>
+            <rect x="48" y="44" width="38" height="2.5" rx="1.25" fill="currentColor" opacity="0.1"/>
+            <rect x="48" y="52" width="24" height="2.5" rx="1.25" fill="currentColor" opacity="0.08"/>
+            <circle cx="135" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.2"/>
+            <path d="M128 30 L133 35 L142 25" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.25"/>
+            <path d="M120 60 Q130 50 140 60 Q150 70 140 72 Q130 74 125 68 Q120 62 120 60Z" fill="currentColor" opacity="0.05"/>
+          </svg>
+        )}
+      </div>
+      <span class="category-badge" data-category={post.data.category}>
+        {categoryLabel}
+      </span>
+    </div>
+
+    <div class="card-body">
+      <div class="card-meta">
+        <div class="category-icon" set:html={categoryIcon} />
+        <time datetime={post.data.pubDate.toISOString()}>{formattedDate}</time>
+        <span class="meta-dot">·</span>
+        <span class="reading-time">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {readingTimeText}
+        </span>
+        {post.data.difficulty && (
+          <span class="difficulty-badge">{post.data.difficulty}</span>
+        )}
+      </div>
+
+      <h2 class="card-title">{post.data.title}</h2>
+      <p class="card-description">{post.data.description}</p>
+
+      <span class="read-more">
+        {readMoreText}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </span>
+    </div>
+  </a>
+
+  {post.data.tags.length > 0 && (
+    <div class="card-tags">
+      <TagList tags={post.data.tags} lang={lang} />
+    </div>
+  )}
+</article>
+
+<style>
+  .post-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px);
+    border-color: var(--color-accent);
+  }
+
+  .card-link {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .card-link:hover { color: inherit; }
+
+  .card-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+    border-radius: var(--radius-md);
+  }
+
+  /* Illustration banner */
+  .card-illustration {
+    position: relative;
+    height: 90px;
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-cream) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .post-card[data-category='htb'] .card-illustration {
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-cream) 100%);
+    color: var(--color-olive);
+  }
+
+  .post-card[data-category='daily-alpacahack'] .card-illustration {
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-cream) 100%);
+    color: var(--color-olive);
+  }
+
+  .post-card[data-category='lang'] .card-illustration {
+    color: var(--color-accent);
+  }
+
+  .post-card[data-category='misc'] .card-illustration {
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-cream) 100%);
+    color: var(--color-accent-warm);
+  }
+
+  .post-card:hover .card-illustration {
+    background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-secondary) 100%);
+  }
+
+  .illustration-bg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .illustration-bg svg {
+    width: 80%;
+    max-width: 200px;
+    height: auto;
+    transition: transform var(--transition-normal);
+  }
+
+  .post-card:hover .illustration-bg svg {
+    transform: scale(1.08);
+  }
+
+  .card-illustration .category-badge {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-surface);
+    background-color: var(--color-accent);
+  }
+
+  .category-badge[data-category='htb'] { background-color: var(--color-olive); }
+  .category-badge[data-category='daily-alpacahack'] { background-color: var(--color-olive); }
+  .category-badge[data-category='lang'] { background-color: var(--color-accent); }
+  .category-badge[data-category='misc'] { background-color: var(--color-accent-warm); }
+
+  /* Card body */
+  .card-body {
+    flex: 1;
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+  }
+
+  .category-icon {
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+    border-radius: 4px;
+    background-color: var(--color-secondary);
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .post-card[data-category='htb'] .category-icon { color: var(--color-olive); }
+  .post-card[data-category='daily-alpacahack'] .category-icon { color: var(--color-olive); }
+  .post-card[data-category='misc'] .category-icon { color: var(--color-accent-warm); }
+
+  .category-icon :global(svg) { width: 100%; height: 100%; }
+
+  .meta-dot { color: var(--color-border); font-weight: 700; }
+
+  .reading-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-style: italic;
+  }
+
+  .reading-time svg { opacity: 0.5; }
+
+  .difficulty-badge {
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 0.65rem;
+    font-weight: 500;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+  }
+
+  .card-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: var(--space-xs);
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+  }
+
+  .post-card:hover .card-title { color: var(--color-accent); }
+
+  .card-description {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0 0 var(--space-md) 0;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    transition: gap var(--transition-fast);
+    margin-top: auto;
+  }
+
+  .post-card:hover .read-more { gap: var(--space-sm); }
+
+  .card-tags {
+    padding: var(--space-sm) var(--space-lg) var(--space-md);
+    border-top: 1px solid var(--color-border);
+  }
+</style>

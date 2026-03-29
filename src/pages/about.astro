@@ -1,0 +1,146 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const lang = 'ja';
+---
+
+<BaseLayout
+  title="About - konkon.dev"
+  description="このブログについて"
+  lang={lang}
+>
+  <article class="about-content">
+    <h1>About</h1>
+    
+    <section>
+      <h2>このブログについて</h2>
+      <p>
+        HackTheBox の攻略記録とプログラミング言語探求を中心とした個人技術ブログです。
+      </p>
+    </section>
+
+    <section>
+      <h2>トピック</h2>
+      <details class="topic-toggle">
+        <summary>HackTheBox Writeups</summary>
+        <p>CTF チャレンジとセキュリティ研究</p>
+      </details>
+      <details class="topic-toggle">
+        <summary>Daily AlpacaHack</summary>
+        <p><a href="https://alpacahack.com/" target="_blank" rel="noopener">AlpacaHack</a> の日替わりCTFチャレンジの解法記録。暗号・Web・リバーシングなど幅広いジャンルの問題に毎日取り組み、その過程と学びをまとめています。</p>
+      </details>
+      <details class="topic-toggle">
+        <summary>言語探求</summary>
+        <p>Clojure などのプログラミング言語の深掘り</p>
+      </details>
+      <details class="topic-toggle">
+        <summary>その他</summary>
+        <p>様々な技術トピックと考察</p>
+      </details>
+    </section>
+
+    <section>
+      <h2>技術スタック</h2>
+      <p>
+        このブログは Astro v5.x と TypeScript で構築され、静的サイトとしてデプロイされています。
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .about-content {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  h1 {
+    margin-bottom: var(--space-lg);
+  }
+
+  section {
+    margin-bottom: var(--space-xl);
+  }
+
+  h2 {
+    color: var(--color-accent);
+    margin-bottom: var(--space-md);
+  }
+
+  p {
+    line-height: 1.7;
+    margin-bottom: var(--space-md);
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  li {
+    margin-bottom: var(--space-sm);
+    padding-left: var(--space-md);
+    position: relative;
+  }
+
+  li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+  }
+
+  strong {
+    color: var(--color-accent);
+  }
+
+  .topic-toggle {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-sm);
+    overflow: hidden;
+  }
+
+  .topic-toggle summary {
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-accent);
+    background-color: var(--color-secondary);
+    transition: background-color var(--transition-fast);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .topic-toggle summary::before {
+    content: "▸";
+    display: inline-block;
+    transition: transform var(--transition-fast);
+  }
+
+  .topic-toggle[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  .topic-toggle summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .topic-toggle summary:hover {
+    background-color: var(--color-cream);
+  }
+
+  .topic-toggle p {
+    padding: var(--space-md);
+    margin: 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .topic-toggle a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

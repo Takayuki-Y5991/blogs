@@ -1,0 +1,23 @@
+{
+  "name": "astro-blog",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "astro": "^5.0.0",
+    "typescript": "^5.9.3",
+    "valibot": "^1.2.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "fast-check": "^4.0.0",
+    "vitest": "^3.0.0"
+  }
+}

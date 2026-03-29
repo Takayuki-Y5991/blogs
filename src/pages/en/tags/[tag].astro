@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { filterPostsByLang, useTranslations } from '../../../i18n/utils';
+
+export const getStaticPaths = (async () => {
+  const allPosts = await getCollection('blog');
+  const enPosts = filterPostsByLang(allPosts, 'en');
+  
+  // 全タグを収集
+  const allTags = new Set<string>();
+  enPosts.forEach(post => {
+    post.data.tags.forEach(tag => allTags.add(tag));
+  });
+  
+  return Array.from(allTags).map(tag => ({
+    params: { tag },
+    props: { 
+      posts: enPosts.filter(post => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+const lang = 'en';
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={`Tag: ${tag} - konkon.dev`}
+  description={`Posts tagged with ${tag}`}
+  lang={lang}
+>
+  <h1>Tag: {tag}</h1>
+  <div class="post-list">
+    {posts.map((post) => (
+      <PostCard post={post} lang={lang} />
+    ))}
+  </div>
+  {posts.length === 0 && (
+    <p class="no-posts">No posts with this tag.</p>
+  )}
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-bottom: var(--space-lg);
+  }
+
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .no-posts {
+    color: var(--color-text-muted);
+    text-align: center;
+    padding: var(--space-xl);
+  }
+</style>

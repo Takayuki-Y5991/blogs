@@ -1,0 +1,89 @@
+---
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const currentYear = new Date().getFullYear();
+---
+
+<footer>
+  <div class="footer-container">
+    <div class="footer-divider">
+      <span class="divider-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
+          <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
+          <line x1="6" x2="6" y1="2" y2="4"/>
+          <line x1="10" x2="10" y1="2" y2="4"/>
+          <line x1="14" x2="14" y1="2" y2="4"/>
+        </svg>
+      </span>
+    </div>
+    <p class="footer-text">&copy; {currentYear} konkon.dev</p>
+    <p class="footer-tagline">{lang === 'ja' ? 'コーヒーとコードと共に' : 'With coffee and code'}</p>
+  </div>
+</footer>
+
+<style>
+  footer {
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-xl) 0 var(--space-lg);
+    margin-top: auto;
+  }
+
+  .footer-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+    text-align: center;
+  }
+
+  .footer-divider {
+    margin-bottom: var(--space-lg);
+    position: relative;
+  }
+
+  .footer-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-border), transparent);
+  }
+
+  .divider-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-surface);
+    padding: 0 var(--space-md);
+    color: var(--color-accent);
+  }
+
+  .footer-text {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .footer-tagline {
+    color: var(--color-accent);
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .footer-container {
+      padding: 0 var(--space-lg);
+    }
+  }
+</style>

@@ -1,0 +1,334 @@
+---
+import type { Lang } from '../i18n/ui';
+import BaseLayout from './BaseLayout.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import { useTranslations } from '../i18n/utils';
+
+export interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  category: string;
+  tags: string[];
+  lang: Lang;
+  difficulty?: string;
+  headings?: Heading[];
+}
+
+const { title, description, pubDate, category, tags, lang, difficulty, headings = [] } = Astro.props;
+const t = useTranslations(lang);
+
+const formattedDate = pubDate.toLocaleDateString(lang === 'ja' ? 'ja-JP' : 'en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const categoryLabel = t(`category.${category}`);
+---
+
+<BaseLayout title={title} description={description} lang={lang}>
+  <div class="post-container">
+    <article class="post">
+      <header class="post-header">
+        <div class="post-meta-top">
+          <span class="category-badge" data-category={category}>{categoryLabel}</span>
+          {difficulty && category === 'htb' && (
+            <span class="difficulty-badge">{difficulty}</span>
+          )}
+        </div>
+        <h1 class="post-title">{title}</h1>
+        <div class="post-meta">
+          <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+          {tags.length > 0 && (
+            <div class="post-tags-inline">
+              {tags.map((tag) => (
+                <a href={`${lang === 'ja' ? '' : '/en'}/tags/${tag}`} class="tag-link">#{tag}</a>
+              ))}
+            </div>
+          )}
+        </div>
+      </header>
+      <div class="post-content">
+        <slot />
+      </div>
+    </article>
+    <aside class="toc-sidebar">
+      <TableOfContents headings={headings} lang={lang} />
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .post-container {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .toc-sidebar {
+    display: none;
+    order: 2;
+  }
+
+  @media (min-width: 1200px) {
+    .toc-sidebar { display: block; }
+  }
+
+  @media (max-width: 1199px) {
+    .post-container { grid-template-columns: 1fr; }
+  }
+
+  .post {
+    width: 100%;
+    min-width: 0;
+    order: 1;
+  }
+
+  .post-header {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+    text-align: center;
+  }
+
+  .post-meta-top {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .category-badge {
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-surface);
+    background-color: var(--color-accent);
+  }
+
+  .category-badge[data-category='htb'] { background-color: var(--color-olive); }
+  .category-badge[data-category='daily-alpacahack'] { background-color: var(--color-olive); }
+  .category-badge[data-category='lang'] { background-color: var(--color-accent); }
+  .category-badge[data-category='misc'] { background-color: var(--color-accent-warm); }
+
+  .difficulty-badge {
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+  }
+
+  .post-title {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 700;
+    font-family: var(--font-heading);
+    line-height: 1.3;
+    margin-bottom: var(--space-md);
+  }
+
+  .post-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  .post-tags-inline {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .tag-link {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    transition: color var(--transition-fast);
+  }
+
+  .tag-link:hover {
+    color: var(--color-accent);
+  }
+
+  .post-content {
+    font-size: clamp(1rem, 2vw, 1.05rem);
+    line-height: 1.9;
+    max-width: 42rem;
+  }
+
+  .post-content :global(h1),
+  .post-content :global(h2),
+  .post-content :global(h3),
+  .post-content :global(h4) {
+    font-family: var(--font-heading);
+    color: var(--color-text);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-md);
+    scroll-margin-top: 100px;
+  }
+
+  .post-content :global(h2) {
+    font-size: clamp(1.4rem, 3vw, 1.65rem);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .post-content :global(h3) {
+    font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+  }
+
+  .post-content :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-color: rgba(139, 111, 71, 0.3);
+    text-underline-offset: 3px;
+    transition: text-decoration-color var(--transition-fast);
+  }
+
+  .post-content :global(a:hover) {
+    text-decoration-color: var(--color-accent);
+  }
+
+  .post-content :global(code) {
+    background-color: var(--color-secondary);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: var(--font-code);
+  }
+
+  .post-content :global(pre) {
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin-bottom: var(--space-lg);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    border: 1px solid var(--color-border);
+  }
+
+  .post-content :global(pre code) {
+    background: none;
+    padding: 0;
+    border: none;
+    color: inherit;
+  }
+
+  .post-content :global(blockquote) {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--space-md);
+    margin: var(--space-lg) 0;
+    color: var(--color-text-muted);
+    font-style: italic;
+    font-family: var(--font-heading);
+  }
+
+  .post-content :global(ul),
+  .post-content :global(ol) {
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-lg);
+  }
+
+  .post-content :global(li) {
+    margin-bottom: var(--space-xs);
+  }
+
+  .post-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    margin: var(--space-lg) 0;
+  }
+
+  .post-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-lg) 0;
+    font-size: 0.9rem;
+    overflow-x: auto;
+    display: block;
+  }
+
+  .post-content :global(th),
+  .post-content :global(td) {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .post-content :global(th) {
+    background-color: var(--color-secondary);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .post-content :global(tr:hover) {
+    background-color: var(--color-cream);
+  }
+
+  .post-content :global(details.spoiler) {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    margin: var(--space-lg) 0;
+    overflow: hidden;
+  }
+
+  .post-content :global(details.spoiler summary) {
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    color: var(--color-accent);
+    background-color: var(--color-secondary);
+    transition: background-color var(--transition-fast);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .post-content :global(details.spoiler summary::before) {
+    content: "▸";
+    display: inline-block;
+    transition: transform var(--transition-fast);
+  }
+
+  .post-content :global(details.spoiler[open] summary::before) {
+    transform: rotate(90deg);
+  }
+
+  .post-content :global(details.spoiler summary::-webkit-details-marker) {
+    display: none;
+  }
+
+  .post-content :global(details.spoiler summary:hover) {
+    background-color: var(--color-cream);
+  }
+
+  .post-content :global(details.spoiler > :not(summary)) {
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+  }
+
+  .post-content :global(details.spoiler > :last-child) {
+    padding-bottom: var(--space-md);
+  }
+</style>

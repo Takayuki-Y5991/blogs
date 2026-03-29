@@ -1,0 +1,41 @@
+---
+import type { Lang } from '../i18n/ui';
+import { languages } from '../i18n/ui';
+import { getAlternateUrl } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const targetLang: Lang = lang === 'ja' ? 'en' : 'ja';
+const alternateUrl = getAlternateUrl(Astro.url, targetLang);
+---
+
+<a href={alternateUrl} class="lang-switcher">
+  {languages[targetLang]}
+</a>
+
+<style>
+  .lang-switcher {
+    padding: 4px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+  }
+
+  .lang-switcher:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background-color: rgba(139, 111, 71, 0.06);
+  }
+
+  .lang-switcher:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>

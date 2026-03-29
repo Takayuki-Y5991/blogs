@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import SearchBar from '../../../components/SearchBar.astro';
+import { filterPostsByLang, useTranslations } from '../../../i18n/utils';
+
+const lang = 'en';
+const t = useTranslations(lang);
+
+const allPosts = await getCollection('blog');
+const posts = filterPostsByLang(allPosts, lang);
+const sortedPosts = posts.sort((a, b) => 
+  b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const totalPosts = sortedPosts.length;
+---
+
+<BaseLayout
+  title={`${t('post.allPosts')} - konkon.dev`}
+  description="All blog posts"
+  lang={lang}
+>
+  <div class="page-header">
+    <h1>{t('post.allPosts')}</h1>
+    <p class="post-count">{totalPosts} posts</p>
+  </div>
+  <SearchBar lang={lang} />
+  <div class="post-grid">
+    {sortedPosts.map((post) => (
+      <PostCard post={post} lang={lang} />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-xl);
+    text-align: center;
+    padding: var(--space-lg) 0;
+  }
+
+  h1 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .post-count {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    max-width: var(--content-width);
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
