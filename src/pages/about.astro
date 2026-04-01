@@ -9,10 +9,16 @@ const lang = 'ja';
   description="このブログについて"
   lang={lang}
 >
-  <article class="about-content">
-    <h1>About</h1>
-    
-    <section>
+  <div class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>About</h1>
+      <p class="hero-subtitle">技術と好奇心が交差する場所</p>
+    </div>
+  </div>
+
+  <article class="about-container">
+    <section class="about-section introduce">
       <h2>このブログについて</h2>
       <p>
         HackTheBox の攻略記録とプログラミング言語探求を中心とした個人技術ブログです。
@@ -39,73 +45,133 @@ const lang = 'ja';
       </details>
     </section>
 
-    <section>
+    <section class="about-section stack">
       <h2>技術スタック</h2>
-      <p>
-        このブログは Astro v5.x と TypeScript で構築され、静的サイトとしてデプロイされています。
-      </p>
+      <div class="stack-info">
+        <p>
+          このブログは Astro v5.x と TypeScript で構築され、静的サイトとしてデプロイされています。
+        </p>
+        <div class="stack-tags">
+          <span>Astro</span>
+          <span>TypeScript</span>
+          <span>Markdown</span>
+          <span>Vite</span>
+        </div>
+      </div>
     </section>
   </article>
 </BaseLayout>
 
+
 <style>
-  .about-content {
-    max-width: var(--max-width);
+  .hero {
+    position: relative;
+    margin: calc(-1 * var(--space-lg)) calc(-1 * var(--space-md)) var(--space-xl);
+    padding: var(--space-xl) var(--space-md);
+    background-image: url('/images/about-hero.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow: hidden;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      margin: calc(-1 * var(--space-xl)) calc(-1 * var(--space-lg)) var(--space-xl);
+      padding: var(--space-xl) var(--space-lg);
+      min-height: 280px;
+    }
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(44, 36, 32, 0.8) 0%,
+      rgba(44, 36, 32, 0.6) 50%,
+      rgba(139, 111, 71, 0.7) 100%
+    );
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .hero h1 {
+    color: #FFFFFF;
+    margin-bottom: var(--space-sm);
+    font-family: var(--font-heading);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    font-size: 3.5rem;
+  }
+
+  .hero-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    font-style: italic;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .about-container {
+    max-width: var(--content-width);
     margin: 0 auto;
+    padding: 0 var(--space-md);
   }
 
-  h1 {
-    margin-bottom: var(--space-lg);
-  }
-
-  section {
-    margin-bottom: var(--space-xl);
+  .about-section {
+    margin-bottom: var(--space-xxl);
   }
 
   h2 {
     color: var(--color-accent);
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  h2::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--color-accent);
+    opacity: 0.3;
   }
 
   p {
-    line-height: 1.7;
+    line-height: 1.8;
     margin-bottom: var(--space-md);
-  }
-
-  ul {
-    list-style: none;
-    padding-left: 0;
-  }
-
-  li {
-    margin-bottom: var(--space-sm);
-    padding-left: var(--space-md);
-    position: relative;
-  }
-
-  li::before {
-    content: "▸";
-    position: absolute;
-    left: 0;
-    color: var(--color-accent);
-  }
-
-  strong {
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
   .topic-toggle {
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    margin-bottom: var(--space-sm);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
     overflow: hidden;
+    background-color: var(--color-surface);
+    transition: all var(--transition-normal);
+  }
+
+  .topic-toggle:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
   }
 
   .topic-toggle summary {
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--space-md);
     cursor: pointer;
     font-weight: 600;
-    color: var(--color-accent);
+    color: var(--color-text);
     background-color: var(--color-secondary);
     transition: background-color var(--transition-fast);
     list-style: none;
@@ -118,6 +184,7 @@ const lang = 'ja';
     content: "▸";
     display: inline-block;
     transition: transform var(--transition-fast);
+    color: var(--color-accent);
   }
 
   .topic-toggle[open] summary::before {
@@ -128,19 +195,34 @@ const lang = 'ja';
     display: none;
   }
 
-  .topic-toggle summary:hover {
-    background-color: var(--color-cream);
-  }
-
   .topic-toggle p {
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
     margin: 0;
     border-top: 1px solid var(--color-border);
+    font-size: 0.95rem;
   }
 
-  .topic-toggle a {
+  .stack-info {
+    padding: var(--space-lg);
+    background-color: var(--color-secondary);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--color-border);
+  }
+
+  .stack-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+  }
+
+  .stack-tags span {
+    padding: 4px 12px;
+    background-color: var(--color-cream);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
     color: var(--color-accent);
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
 </style>

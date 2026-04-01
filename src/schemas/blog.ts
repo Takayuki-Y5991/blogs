@@ -6,6 +6,7 @@ export const blogSchema = z.object({
   pubDate: z.coerce.date(),
   category: z.enum(['htb', 'lang', 'misc', 'daily-alpacahack']),
   tags: z.array(z.string()),
+  image: z.string().optional(),
   difficulty: z.string().optional(),
   draft: z.boolean().default(false),
 });
