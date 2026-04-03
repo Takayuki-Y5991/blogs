@@ -3,7 +3,7 @@ title: "Message For You"
 description: "Daily AlpacaHack: 2026/04/02"
 pubDate: 2026-04-03
 category: "daily-alpacahack"
-tags: ["ctf", "security", "web"]
+tags: ["ctf", "security", "web", "python"]
 difficulty: "Easy"
 draft: false
 ---

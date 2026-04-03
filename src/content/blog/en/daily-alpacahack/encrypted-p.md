@@ -3,7 +3,7 @@ title: "Encrypted-P"
 description: "Daily AlpacaHack: 2026/03/27"
 pubDate: 2026-03-29
 category: "daily-alpacahack"
-tags: ["ctf", "security", "crypt"]
+tags: ["ctf", "security", "crypt", "python"]
 difficulty: "Easy"
 draft: false
 ---
